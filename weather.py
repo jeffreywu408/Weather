@@ -9,7 +9,7 @@ def getKey():
             apiKey = f.read()
         f.close()
     except:
-        print("Invalid API key")
+        print("Unale to read key")
     return apiKey
 
 def main():
@@ -24,19 +24,15 @@ def main():
     weather = response.json()
     print(weather)
     
-    
     if weather["cod"] != "404": 
         y = weather["main"]  
-        temperature = y["temp"] 
-        pressure = y["pressure"] 
+        temperature = y["temp"]
         humidiy = y["humidity"] 
         z = weather["weather"] 
         weather_description = z[0]["description"] 
     
         print(" Temperature (in Farenheit) = " +
-                        str(temperature) + 
-              "\n Atmospheric Pressure (in millibars) = " +
-                        str(pressure) +
+                        str(temperature) +
               "\n Humidity (in percentage) = " +
                         str(humidiy) +
               "\n Description = " +
