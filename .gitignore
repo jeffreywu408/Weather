@@ -1,6 +1,8 @@
 /Debug/
 
 key
+.pydevproject
+.gitattributes
 
 # Eclipse
 .classpath
