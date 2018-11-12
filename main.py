@@ -9,14 +9,15 @@ def getKey():
             apiKey = f.read()
         f.close()
     except:
-        print("Unale to read key")
+        print("Unable to read key")
     return apiKey
 
-def main():
+def forecast(cityName):
     apiKey = getKey()
+    if (apiKey == ""):
+        return
+    
     baseURL = "http://api.openweathermap.org/data/2.5/weather?"
-     
-    cityName = input("Enter city name : ") 
     
     completeURL = baseURL + "appid=" + apiKey + "&q=" + cityName + "&units=imperial"
     
@@ -24,22 +25,27 @@ def main():
     weather = response.json()
     print(weather)
     
-    if weather["cod"] != "404": 
+    if weather["cod"] == 200: 
         y = weather["main"]  
         temperature = y["temp"]
         humidiy = y["humidity"] 
         z = weather["weather"] 
         weather_description = z[0]["description"] 
     
-        print(" Temperature (in Farenheit) = " +
+        print("Temperature (in Farenheit) = " +
                         str(temperature) +
               "\n Humidity (in percentage) = " +
                         str(humidiy) +
               "\n Description = " +
                         str(weather_description))
+    
     else:
-        print(" City Not Found ")
+        print(weather["message"])
 
+
+def main():
+    cityName = input("Enter city name: ")
+    forecast(cityName)
 
 if __name__ == '__main__':
     main()
