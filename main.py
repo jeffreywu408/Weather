@@ -6,7 +6,7 @@ def getKey():
     try:
         f=open("key", "r")
         if f.mode == 'r':
-            apiKey = f.read()
+            apiKey = f.read().replace('\n','')
         f.close()
     except:
         print("Unable to read key")
@@ -17,30 +17,20 @@ def forecast(cityName):
     if (apiKey == ""):
         return
     
-    baseURL = "http://api.openweathermap.org/data/2.5/weather?"
+    baseURL = "https://api.openweathermap.org/data/2.5/weather?"
     
-    completeURL = baseURL + "appid=" + apiKey + "&q=" + cityName + "&units=imperial"
+    completeURL = baseURL + "APPID=" + apiKey + "&units=imperial" + "&q=" + cityName
     
-    response = requests.get(completeURL) 
-    weather = response.json()
-    print(weather)
+    response = requests.get(completeURL)
+    w = response.json()
     
-    if weather["cod"] == 200: 
-        y = weather["main"]  
-        temperature = y["temp"]
-        humidiy = y["humidity"] 
-        z = weather["weather"] 
-        weather_description = z[0]["description"] 
-    
-        print("Temperature (in Farenheit) = " +
-                        str(temperature) +
-              "\n Humidity (in percentage) = " +
-                        str(humidiy) +
-              "\n Description = " +
-                        str(weather_description))
-    
+    if w["cod"] >= 200 and w["cod"] < 300: 
+        print("Current Weather Conditions")
+        print("Temperature = " + str(w["main"]["temp"]) + "F" +
+              "\nHumidity = " + str(w["main"]["humidity"]) + "%" +
+              "\nDescription = " + str(w["weather"][0]["description"]))
     else:
-        print(weather["message"])
+        print(w["message"])
 
 
 def main():
