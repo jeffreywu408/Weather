@@ -3,41 +3,50 @@ import requests
 import re
 
 
-def getKey():
-    apiKey = ""
+def get_key():
+    api_key = ""
     try:
         f = open("key", "r")
         if f.mode == 'r':
-            apiKey = f.read().replace('\n', '')
+            api_key = f.read().replace('\n', '')
         f.close()
-    except:
+    except IOError:
         print("Unable to read key")
-    return apiKey
+    return api_key
 
 
-def forecast(cityName):
-    apiKey = getKey()
-    if (apiKey == ""):
+def forecast(city_name):
+    api_key = get_key()
+    if api_key == "":
         return
 
     # regex for ZIP Code
     pattern = "^\d{5}(?:[-\s]\d{4})?$"
-    zip = re.match(pattern, cityName)
+    zip_code = re.match(pattern, city_name)
 
-    if zip is None:
-        currentURL = "https://api.openweathermap.org/data/2.5/weather?APPID=" + apiKey + "&units=imperial" + "&q=" + cityName
-        w = requests.get(currentURL).json()
+    if zip_code is None:
+        current_url = \
+            "https://api.openweathermap.org/data/2.5/weather?APPID=" \
+            + api_key + "&units=imperial" + "&q=" + city_name
+        w = requests.get(current_url).json()
 
-        forecastURL = "https://api.openweathermap.org/data/2.5/forecast?appid=" + apiKey + "&units=imperial" + "&q=" + cityName
-        f = requests.get(forecastURL).json()
+        forecast_url = \
+            "https://api.openweathermap.org/data/2.5/forecast?appid=" \
+            + api_key + "&units=imperial" + "&q=" + city_name
+        f = requests.get(forecast_url).json()
+
     else:
-        currentURL = "https://api.openweathermap.org/data/2.5/weather?APPID=" + apiKey + "&units=imperial" + "&zip=" + cityName
-        w = requests.get(currentURL).json()
+        current_url = \
+            "https://api.openweathermap.org/data/2.5/weather?APPID=" \
+            + api_key + "&units=imperial" + "&zip=" + city_name
+        w = requests.get(current_url).json()
 
-        forecastURL = "https://api.openweathermap.org/data/2.5/forecast?appid=" + apiKey + "&units=imperial" + "&zip=" + cityName
-        f = requests.get(forecastURL).json()
+        forecast_url = \
+            "https://api.openweathermap.org/data/2.5/forecast?appid=" \
+            + api_key + "&units=imperial" + "&zip=" + city_name
+        f = requests.get(forecast_url).json()
 
-    if w["cod"] >= 200 and w["cod"] < 300:
+    if 200 <= w["cod"] < 300:
         city = str(w['name'])
         country = str(w['sys']['country'])
         temp = str(w["main"]["temp"])
@@ -52,18 +61,18 @@ def forecast(cityName):
         print(w["message"])
         return
 
-    currentDate = ""
+    current_date = ""
     for i in f["list"]:
         # dt_txt is in format [YYYY-MM-DD HH:MM:SS]
         time = i["dt_txt"]
 
         # nextDate = YYYY-MM-DD, hour = HH:MM:SS
-        nextDate, hour = time.split(" ")
+        next_date, hour = time.split(" ")
 
         # Only print each date once
-        if currentDate != nextDate:
-            currentDate = nextDate
-            year, month, day = currentDate.split('-')
+        if current_date != next_date:
+            current_date = next_date
+            year, month, day = current_date.split('-')
             date = {'y': year, 'm': month, 'd': day}
             print('{m}/{d}/{y}'.format(**date))
 
@@ -88,8 +97,8 @@ def forecast(cityName):
 
 
 def main():
-    cityName = input("Enter City Name or ZIP Code: ")
-    forecast(cityName)
+    city_name = input("Enter City Name or ZIP Code: ")
+    forecast(city_name)
 
 
 if __name__ == '__main__':
